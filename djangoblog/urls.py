@@ -37,6 +37,7 @@ handler500 = 'blog.views.server_error_view'
 handle403 = 'blog.views.permission_denied_view'
 urlpatterns = [
                   re_path(r'^admin/', admin_site.urls),
+                  re_path(r'^api/v1/', include('api.urls', namespace='api')),
                   re_path(r'', include('blog.urls', namespace='blog')),
                   re_path(r'mdeditor/', include('mdeditor.urls')),
                   re_path(r'', include('comments.urls', namespace='comment')),
