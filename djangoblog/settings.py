@@ -143,7 +143,10 @@ USE_I18N = True
 
 USE_L10N = True
 
-USE_TZ = True
+USE_TZ = False
+# 启用 USE_TZ = True 后，处理时间方面，有两条 “黄金法则”：
+# 保证存储到数据库中的是 UTC 时间；
+# 在函数之间传递时间参数时，确保时间已经转换成 UTC 时间；
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.10/howto/static-files/
