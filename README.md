@@ -41,7 +41,7 @@ mysql客户端从`pymysql`修改成了`mysqlclient`，具体请参考 [pypi](htt
 
 ## 运行
 
- 修改`djangoblog/setting.py` 修改数据库配置，如下所示：
+ 修改`djangoblog/setting.py` 修改数据库配置，如下所示(具体根据你要连接的数据库进行配置修改)：
 
 ```python
 DATABASES = {
@@ -92,7 +92,7 @@ python manage.py compress --force
 执行： `python manage.py runserver`
 
 
-浏览器打开: http://127.0.0.1:8000/  就可以看到效果了。  
+浏览器打开: http://127.0.0.1:7890/  就可以看到效果了。  
 
 ## 服务器部署
 
