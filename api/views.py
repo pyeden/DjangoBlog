@@ -1,6 +1,7 @@
 import datetime
 import logging
 import os
+import time
 import uuid
 
 from django.conf import settings
@@ -12,7 +13,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.views.generic.detail import DetailView
 from django.views.generic.list import ListView
 
-from rest_framework.views import APIView
+from rest_framework.generics import GenericAPIView
 from rest_framework.response import Response
 from rest_framework import status
 
@@ -20,6 +21,7 @@ from blog.models import Article, Category, Tag, Links, LinkShowType
 from comments.forms import CommentForm
 from djangoblog.utils import cache, get_sha256, get_blog_setting
 from . import serializers
+from . import paginations
 
 logger = logging.getLogger(__name__)
 
@@ -89,17 +91,26 @@ class ArticleListView(ListView):
         return super(ArticleListView, self).get_context_data(**kwargs)
 
 
-class IndexView(APIView):
+class IndexView(GenericAPIView):
     '''
     首页
     '''
-    # 友情链接类型
-    link_type = LinkShowType.I
+
+    queryset = Article.objects.all()
+    serializer_class = serializers.ArticleSerializer
+    # ordering_fields = None
+    pagination_class = paginations.MyPagination
 
     def get(self, request):
-        article_list = Article.objects.all()
-        serializer = serializers.ArticleSerializer(article_list, many=True)
-        return Response(serializer.data)
+        time.sleep(1)
+        qs = self.filter_queryset(self.get_queryset())
+        page = self.paginate_queryset(qs)
+        if page:
+            serializer_obj = self.get_serializer(instance=page, many=True)
+            return self.get_paginated_response({'code': 0, 'res': "success", 'msg': serializer_obj.data})
+
+        serializer_obj = self.get_serializer(instance=qs, many=True)
+        return Response({'code': 0, 'res': "success", 'msg': serializer_obj.data}, status=status.HTTP_200_OK)
 
 
 class ArticleDetailView(DetailView):
