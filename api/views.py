@@ -6,7 +6,7 @@ import uuid
 
 from django.conf import settings
 from django.core.paginator import Paginator
-from django.http import HttpResponse, HttpResponseForbidden
+from django.http import HttpResponse, HttpResponseForbidden, JsonResponse
 from django.shortcuts import get_object_or_404
 from django.shortcuts import render
 from django.views.decorators.csrf import csrf_exempt
@@ -102,7 +102,6 @@ class IndexView(GenericAPIView):
     pagination_class = paginations.MyPagination
 
     def get(self, request):
-        time.sleep(1)
         qs = self.filter_queryset(self.get_queryset())
         page = self.paginate_queryset(qs)
         if page:
@@ -113,24 +112,29 @@ class IndexView(GenericAPIView):
         return Response({'code': 0, 'res': "success", 'msg': serializer_obj.data}, status=status.HTTP_200_OK)
 
 
-class ArticleDetailView(DetailView):
+class ArticleDetailView(GenericAPIView):
     '''
     文章详情页面
     '''
-    template_name = 'blog/article_detail.html'
-    model = Article
-    pk_url_kwarg = 'article_id'
-    context_object_name = "article"
 
-    def get_object(self, queryset=None):
-        obj = super(ArticleDetailView, self).get_object()
-        obj.viewed()
+    queryset = Article.objects.all()
+    serializer_class = serializers.ArticleSerializer
+    # ordering_fields = None
+    pagination_class = paginations.MyPagination
+    lookup_url_kwarg = "article_id"
+    object = None
+
+    def get(self, request, year, month, day, article_id):
+        obj = self.get_object()
+        # obj.viwed()
         self.object = obj
-        return obj
+        serializer_obj = self.get_serializer(instance=obj)
+        # TODO 先返回文章详情后续需要获取文章相关联的其他信息
+        article = self.get_context_data()
+        return JsonResponse({'code': 0, 'res': "success", 'msg': serializer_obj.data})
 
     def get_context_data(self, **kwargs):
         comment_form = CommentForm()
-
         article_comments = self.object.comment_list()
         parent_comments = article_comments.filter(parent_comment=None)
         blog_setting = get_blog_setting()
@@ -154,8 +158,9 @@ class ArticleDetailView(DetailView):
 
         kwargs['next_article'] = self.object.next_article
         kwargs['prev_article'] = self.object.prev_article
+        kwargs['object'] = self.object
 
-        return super(ArticleDetailView, self).get_context_data(**kwargs)
+        return kwargs
 
 
 class CategoryDetailView(ArticleListView):
