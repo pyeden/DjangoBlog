@@ -15,7 +15,7 @@ services:
 #      - --collation-server=utf8_general_ci
     environment:
       - MYSQL_DATABASE=djangoblog
-      - MYSQL_ROOT_PASSWORD=DjAnGoBlOg!2!Q@W#E
+      - MYSQL_ROOT_PASSWORD=dengsenzhong
     ports:
       - 3306:3306
     volumes:
@@ -36,15 +36,29 @@ services:
     environment:
       - DJANGO_MYSQL_DATABASE=djangoblog
       - DJANGO_MYSQL_USER=root
-      - DJANGO_MYSQL_PASSWORD=DjAnGoBlOg!2!Q@W#E
+      - DJANGO_MYSQL_PASSWORD=dengsenzhong
       - DJANGO_MYSQL_HOST=db
       - DJANGO_MYSQL_PORT=3306
       - DJANGO_REDIS_URL=redis:6379
+      - DJANGO_DEBUG=False  
+      - DJANGO_SECRET_KEY=n9ceqv38)#&mwuat@(mjb_p%em$dengsenzhonge8$qyr#fw9ot!=ba6lijx-6
+     # - DJANGO_BAIDU_NOTIFY_URL=http://data.zz.baidu.com/urls?site=https://www.example.org&token=CHANGE_ME
+     # - DJANGO_EMAIL_TLS=False  
+     # - DJANGO_EMAIL_SSL=True 
+     # - DJANGO_EMAIL_HOST=smtp.example.org  
+     # - DJANGO_EMAIL_PORT=465 
+     # - DJANGO_EMAIL_USER=SMTP_USER_CHANGE_ME 
+     # - DJANGO_EMAIL_PASSWORD=SMTP_PASSWORD_CHANGE_ME 
+     # - DJANGO_ADMIN_EMAIL=admin@example.org  
+     # - DJANGO_WEROBOT_TOKEN=DJANGO_BLOG_CHANGE_ME  
+      - DJANGO_ELASTICSEARCH_HOST=http://es:9200
     links:
       - db
       - redis
+      - es
     depends_on:
       - db
+      - es
     container_name: djangoblog
   nginx:
     restart: always
@@ -65,3 +79,24 @@ services:
     container_name: redis
     ports:
       - "6379:6379"
+
+  es:
+    image: liangliangyy/elasticsearch-analysis-ik:7.16.1
+    container_name: es
+    restart: always
+    environment:
+      - discovery.type=single-node
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+    ports:
+      - 9200:9200
+    volumes:
+      - ./bin/datas/es/:/usr/share/elasticsearch/data/
+
+  kibana:
+    image: kibana:7.13.2
+    restart: always
+    container_name: kibana
+    ports:
+      - 5601:5601
+    environment:
+      - ELASTICSEARCH_HOSTS=http://es:9200
