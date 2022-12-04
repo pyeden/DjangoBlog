@@ -36,11 +36,9 @@ services:
       - DJANGO_MYSQL_PASSWORD=dengsenzhong
       - DJANGO_MYSQL_HOST=db
       - DJANGO_MYSQL_PORT=3306
-      - DJANGO_MEMCACHED_LOCATION=memcached:11211
       - DJANGO_ELASTICSEARCH_HOST=es:9200
     links:
       - db
-      - memcached
     depends_on:
       - db
     container_name: djangoblog

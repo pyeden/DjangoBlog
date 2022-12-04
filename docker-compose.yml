@@ -20,8 +20,6 @@ services:
       - 3306:3306
     volumes:
       - ./bin/datas/mysql/:/var/lib/mysql
-    depends_on:
-      - redis
     container_name: db
 
   djangoblog:
@@ -33,6 +31,7 @@ services:
     volumes:
       - ./collectedstatic:/code/djangoblog/collectedstatic
       - ./logs:/code/djangoblog/logs
+      - .:/code/djangoblog
     environment:
       - DJANGO_MYSQL_DATABASE=djangoblog
       - DJANGO_MYSQL_USER=root
@@ -58,6 +57,7 @@ services:
       - es
     depends_on:
       - db
+      - redis
       - es
     container_name: djangoblog
   nginx:
@@ -72,6 +72,8 @@ services:
     links:
       - djangoblog:djangoblog
     container_name: nginx
+    depends_on:
+      - djangoblog
 
   redis:
     restart: always
@@ -96,6 +98,8 @@ services:
     image: kibana:7.13.2
     restart: always
     container_name: kibana
+    depends_on:
+      - es
     ports:
       - 5601:5601
     environment:

@@ -22,13 +22,13 @@
     {% endif %}
     {% if most_read_articles %}
 
-        <aside id="views-4" class="widget widget_views"><p class="widget-title">Views</p>
+        <aside id="views-4" class="widget widget_views"><p class="widget-title">阅读排名</p>
             <ul>
                 {% for a in most_read_articles %}
                     <li>
                         <a href="{{ a.get_absolute_url }}" title="{{ a.title }}">
                             {{ a.title }}
-                        </a> - {{ a.views }} views
+                        </a> - {{ a.views }} 阅读数
                     </li>
                 {% endfor %}
             </ul>
@@ -104,6 +104,7 @@
             </div>
         </aside>
     {% endif %}
+    <!--
     <aside id="text-2" class="widget widget_text"><p class="widget-title">欢迎您star或者fork本站源代码</p>
         <div class="textwidget">
 
@@ -114,7 +115,7 @@
                     alt="GitHub forks"></a></p>
         </div>
     </aside>
-
+    -->
     <aside id="meta-3" class="widget widget_meta"><p class="widget-title">功能</p>
         <ul>
             <li><a href="/admin/" rel="nofollow">管理站点</a></li>

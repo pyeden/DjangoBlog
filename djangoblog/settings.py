@@ -36,11 +36,12 @@ TESTING = len(sys.argv) > 1 and sys.argv[1] == 'test'
 # ALLOWED_HOSTS = []
 ALLOWED_HOSTS = ['*', '127.0.0.1', 'example.com']
 # django 4.0新增配置
-CSRF_TRUSTED_ORIGINS = ['http://example.com']
+CSRF_TRUSTED_ORIGINS = ['https://www.pyeden.com']
 # Application definition
 
 
 INSTALLED_APPS = [
+    'simpleui',
     # 'django.contrib.admin',
     'django.contrib.admin.apps.SimpleAdminConfig',
     'django.contrib.auth',
