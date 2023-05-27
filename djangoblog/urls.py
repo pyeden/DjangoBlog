@@ -18,6 +18,7 @@ from django.conf.urls.static import static
 from django.contrib.sitemaps.views import sitemap
 from django.urls import include
 from django.urls import re_path
+from django.views.generic.base import RedirectView
 from haystack.views import search_view_factory
 
 from blog.views import EsSearchView
@@ -25,6 +26,8 @@ from djangoblog.admin_site import admin_site
 from djangoblog.elasticsearch_backend import ElasticSearchModelSearchForm
 from djangoblog.feeds import DjangoBlogFeed
 from djangoblog.sitemap import ArticleSiteMap, CategorySiteMap, StaticViewSitemap, TagSiteMap, UserSiteMap
+from .views import FaviconView
+
 
 sitemaps = {
 
@@ -39,6 +42,7 @@ handler404 = 'blog.views.page_not_found_view'
 handler500 = 'blog.views.server_error_view'
 handle403 = 'blog.views.permission_denied_view'
 urlpatterns = [
+                  re_path(r'^favicon\.ico', RedirectView.as_view(url=r"/media/editor/favicon.ico")),
                   re_path(r'^admin/', admin_site.urls),
                   re_path(r'', include('blog.urls', namespace='blog')),
                   re_path(r'mdeditor/', include('mdeditor.urls')),

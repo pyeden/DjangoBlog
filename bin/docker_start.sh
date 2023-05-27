@@ -7,12 +7,13 @@ NUM_WORKERS=1 # how many worker processes should Gunicorn spawn
 #DJANGO_SETTINGS_MODULE=djangoblog.settings # which settings file should Django use
 DJANGO_WSGI_MODULE=djangoblog.wsgi # WSGI module name
 
-
-echo "Starting $NAME as `whoami`"
-
 # Activate the virtual environment
-cd $DJANGODIR
+#cp /code/djangoblog/bin/nginx.conf /etc/nginx/nginx.conf
+#echo "start nginx..."
 
+#nginx
+
+cd $DJANGODIR
 export PYTHONPATH=$DJANGODIR:$PYTHONPATH
 #pip install -Ur requirements.txt -i http://pypi.douban.com/simple/  --trusted-host pypi.douban.com && \
 #        pip install gunicorn  -i http://pypi.douban.com/simple/ --trusted-host pypi.douban.com

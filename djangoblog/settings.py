@@ -11,6 +11,9 @@ https://docs.djangoproject.com/en/1.10/ref/settings/
 """
 import os
 import sys
+from dotenv import load_dotenv
+
+load_dotenv()
 
 
 def env_to_bool(env, default):
@@ -29,8 +32,8 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = os.environ.get(
     'DJANGO_SECRET_KEY') or 'n9ceqv38)#&mwuat@(mjb_p%em$dengsenzhonge8$qyr#fw9ot!=ba6lijx-6'
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = env_to_bool('DJANGO_DEBUG', True)
-# DEBUG = False
+DEBUG = env_to_bool('DJANGO_DEBUG', True) 
+#DEBUG = False
 TESTING = len(sys.argv) > 1 and sys.argv[1] == 'test'
 
 # ALLOWED_HOSTS = []
@@ -39,7 +42,7 @@ ALLOWED_HOSTS = ['*', '127.0.0.1', 'example.com']
 CSRF_TRUSTED_ORIGINS = ['https://www.pyeden.com']
 # Application definition
 
-
+IMPLEUI_LOGO = "https://www.pyeden.com/media/editor/favicon.ico"
 INSTALLED_APPS = [
     'simpleui',
     # 'django.contrib.admin',
@@ -101,7 +104,6 @@ WSGI_APPLICATION = 'djangoblog.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/1.10/ref/settings/#databases
 
-
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
@@ -115,6 +117,7 @@ DATABASES = {
             'charset': 'utf8mb4'},
     }}
 
+print('数据库地址：', DATABASES)
 # Password validation
 # https://docs.djangoproject.com/en/1.10/ref/settings/#auth-password-validators
 
@@ -304,7 +307,8 @@ COMPRESS_JS_FILTERS = [
     'compressor.filters.jsmin.JSMinFilter'
 ]
 
-MEDIA_ROOT = os.path.join(BASE_DIR, 'uploads')
+#MEDIA_ROOT = os.path.join(BASE_DIR, 'uploads')
+MEDIA_ROOT = os.path.join(STATIC_ROOT, 'uploads')
 MEDIA_URL = '/media/'
 X_FRAME_OPTIONS = 'SAMEORIGIN'
 
@@ -313,7 +317,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 if os.environ.get('DJANGO_ELASTICSEARCH_HOST'):
     ELASTICSEARCH_DSL = {
         'default': {
-            'hosts': os.environ.get('DJANGO_ELASTICSEARCH_HOST')
+            'hosts': os.environ.get('DJANGO_ELASTICSEARCH_HOST'),
         },
     }
     HAYSTACK_CONNECTIONS = {

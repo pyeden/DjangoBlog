@@ -33,8 +33,9 @@ http {
   gzip  on;
 
   server {
-    listen 8001;
-    
+    root /code/djangoblog/collectedstatic/;
+    listen 80 ;
+    keepalive_timeout 70;
     location /static/ {
       expires max;
       alias /code/djangoblog/collectedstatic/;
@@ -47,5 +48,9 @@ http {
       expires max;
       root /code/djangoblog/collectedstatic/uploads/editor/;
     }
+    location / {
+	include proxy_params;  # 代理django后端的时候需要设置，不然表单提交会丢失csrf_toke,返回403 forrbiden
+        proxy_pass http://127.0.0.1:8000;
+      }
   }
 }

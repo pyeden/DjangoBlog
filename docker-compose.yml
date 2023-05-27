@@ -40,7 +40,7 @@ services:
       - DJANGO_MYSQL_PORT=3306
       - DJANGO_REDIS_URL=redis:6379
       - DJANGO_DEBUG=False  
-      - DJANGO_SECRET_KEY=n9ceqv38)#&mwuat@(mjb_p%em$dengsenzhonge8$qyr#fw9ot!=ba6lijx-6
+      - DJANGO_SECRET_KEY="n9ceqv38)#&mwuat@(mjb_p%em$dengsenzhonge8$qyr#fw9ot!=ba6lijx-6"
      # - DJANGO_BAIDU_NOTIFY_URL=http://data.zz.baidu.com/urls?site=https://www.example.org&token=CHANGE_ME
      # - DJANGO_EMAIL_TLS=False  
      # - DJANGO_EMAIL_SSL=True 
@@ -50,15 +50,13 @@ services:
      # - DJANGO_EMAIL_PASSWORD=SMTP_PASSWORD_CHANGE_ME 
      # - DJANGO_ADMIN_EMAIL=admin@example.org  
      # - DJANGO_WEROBOT_TOKEN=DJANGO_BLOG_CHANGE_ME  
-      - DJANGO_ELASTICSEARCH_HOST=http://es:9200
+      - DJANGO_ELASTICSEARCH_HOST=http://192.168.11.12:9200
     links:
       - db
       - redis
-      - es
     depends_on:
       - db
       - redis
-      - es
     container_name: djangoblog
   nginx:
     restart: always
@@ -82,25 +80,74 @@ services:
     ports:
       - "6379:6379"
 
-  es:
+  es01:
     image: liangliangyy/elasticsearch-analysis-ik:7.16.1
-    container_name: es
+    container_name: es01
     restart: always
     environment:
-      - discovery.type=single-node
-      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+      - node.name=es01
+      - cluster.name=es-cluster
+      - discovery.seed_hosts=es02,es03
+      - cluster.initial_master_nodes=es01,es02,es03
+      - bootstrap.memory_lock=true 
+      - "ES_JAVA_OPTS=-Xms1024m -Xmx1024m"
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
     ports:
       - 9200:9200
     volumes:
-      - ./bin/datas/es/:/usr/share/elasticsearch/data/
+      - ./bin/datas/es01/:/usr/share/elasticsearch/data/
+
+
+  es02:
+    image: liangliangyy/elasticsearch-analysis-ik:7.16.1
+    container_name: es02
+    restart: always
+    environment:
+      - node.name=es02
+      - cluster.name=es-cluster
+      - discovery.seed_hosts=es01,es03
+      - cluster.initial_master_nodes=es01,es02,es03
+      - bootstrap.memory_lock=true
+      - "ES_JAVA_OPTS=-Xms1024m -Xmx1024m"
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    volumes:
+      - ./bin/datas/es02/:/usr/share/elasticsearch/data/
+
+
+  es03:
+    image: liangliangyy/elasticsearch-analysis-ik:7.16.1
+    container_name: es03
+    restart: always
+    environment:
+      - node.name=es03
+      - cluster.name=es-cluster
+      - discovery.seed_hosts=es01,es02
+      - cluster.initial_master_nodes=es01,es02,es03
+      - bootstrap.memory_lock=true
+      - "ES_JAVA_OPTS=-Xms1024m -Xmx1024m"
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    volumes:
+      - ./bin/datas/es03/:/usr/share/elasticsearch/data/
+
 
   kibana:
-    image: kibana:7.13.2
+    image: kibana:7.16.1
     restart: always
     container_name: kibana
     depends_on:
-      - es
+      - es01
+    volumes:
+      - ./kibana.yml:/usr/share/kibana/config/kibana.yml
     ports:
       - 5601:5601
     environment:
-      - ELASTICSEARCH_HOSTS=http://es:9200
+      - ELASTICSEARCH_HOSTS=http://es01:9200
